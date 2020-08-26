@@ -62,7 +62,8 @@ export const ModalContent = styled.div`
 export const ModalContentNaverInfo = styled.div`
   display: flex;
   flex-direction: column;
-  height: 500px;
+  height: 550px;
+  width: 300px;
 
   > img {
     position: absolute;
