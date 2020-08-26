@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
 
 import Input from '../../components/Input';
@@ -15,11 +15,13 @@ interface SignInFormData {
 }
 
 const SignIn: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const { addToast } = useToasts();
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
+      setLoading(true);
       try {
         await signIn({
           email: data.email,
@@ -32,6 +34,7 @@ const SignIn: React.FC = () => {
           autoDismiss: true,
         });
       }
+      setLoading(false);
     },
     [addToast, signIn],
   );
@@ -56,7 +59,7 @@ const SignIn: React.FC = () => {
           placeholder="Senha"
           required
         />
-        <Button type="submit" content="Entrar" />
+        <Button type="submit" content={loading ? 'Carregando...' : 'Entrar'} />
       </StyledForm>
     </Container>
   );
