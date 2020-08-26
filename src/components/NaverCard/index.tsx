@@ -147,6 +147,20 @@ const NaverCard: React.FC<NaverCardProps> = ({
     },
   };
 
+  const catchMonthsAndYears = useCallback((isoDate: string) => {
+    const diff = moment.duration(moment().diff(isoDate));
+    const years = diff.years();
+    const months = diff.months();
+
+    if (months && years) {
+      return `${years} ano(s) e ${months} mese(s)`;
+    } else if (!years) {
+      return `${months} mese(s)`;
+    } else {
+      return `${years} ano(s)`;
+    }
+  }, []);
+
   return (
     <Container>
       <ReactModal isOpen={secondModalIsOpen} style={customStylesSecond}>
@@ -162,7 +176,7 @@ const NaverCard: React.FC<NaverCardProps> = ({
             <strong>Idade</strong>
             <span>{moment().diff(naver.birthdate, 'years')} anos</span>
             <strong>Tempo de empresa</strong>
-            <span>{moment().diff(naver.admission_date, 'years')} anos</span>
+            <span>{catchMonthsAndYears(naver.admission_date)}</span>
             <strong>Projetos que participou</strong>
             <span>{naver.project}</span>
 
