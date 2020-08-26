@@ -12,6 +12,11 @@ export const Container = styled.div`
     object-fit: cover;
     margin-bottom: 0.875rem;
     cursor: pointer;
+    transition: 0.4s;
+
+    &:hover {
+      box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.45);
+    }
   }
   > strong {
     font-weight: bold;
@@ -75,7 +80,7 @@ export const ModalContentNaverInfo = styled.div`
   @media (min-width: 700px) {
     height: 100%;
     flex-direction: row;
-    width: 700px;
+    width: 800px;
   }
 `;
 
@@ -90,9 +95,8 @@ export const NaverPhoto = styled.div`
   @media (min-width: 700px) {
     width: 50%;
     > img {
-      width: 100%;
+      min-width: 400px;
       height: 100%;
-      object-fit: cover;
     }
   }
 `;
@@ -101,9 +105,11 @@ export const NaverInfo = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 1.88rem;
+  margin-right: 1.5rem;
 
   > h1 {
     margin: 2rem 0 0.62rem 0;
+    margin-right: 1.1rem;
   }
 
   > span {
