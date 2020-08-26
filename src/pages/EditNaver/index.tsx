@@ -4,7 +4,6 @@ import { useToasts } from 'react-toast-notifications';
 import ReactModal from 'react-modal';
 import { FormHandles } from '@unform/core';
 import moment from 'moment';
-import 'moment/locale/pt-br';
 
 import api from '../../services/api';
 
@@ -26,6 +25,7 @@ import {
   ModalContent,
   H1,
   Space,
+  LoadingStyle,
 } from './styles';
 
 interface UpdateNaverFormData {
@@ -39,9 +39,10 @@ interface UpdateNaverFormData {
 
 const EditNaver = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [naverId, setNaverId] = useState('');
   const [loading, setLoading] = useState(true);
   const { addToast } = useToasts();
+
+  ReactModal.setAppElement('#root');
 
   const { id } = useParams();
   const formRef = useRef<FormHandles>(null);
@@ -50,7 +51,6 @@ const EditNaver = () => {
     async function getNaverInfo() {
       try {
         const res = await api.get(`navers/${id}`);
-        setNaverId(res.data.id);
         res.data.birthdate = moment(res.data.birthdate).format('YYYY-MM-DD');
         res.data.admission_date = moment(res.data.admission_date).format(
           'YYYY-MM-DD',
@@ -69,18 +69,19 @@ const EditNaver = () => {
       }
     }
     getNaverInfo();
-  }, []);
+  }, [addToast, id]);
 
   const handleSubmit = useCallback(
     async (data: UpdateNaverFormData) => {
       const birthdate = new Date(data.birthdate);
       const admission_date = new Date(data.admission_date);
+
       data.birthdate = birthdate.toLocaleDateString('pt-BR');
       data.admission_date = admission_date.toLocaleDateString('pt-BR');
 
       try {
         setLoading(true);
-        await api.post('navers', data);
+        await api.put(`navers/${id}`, data);
         setModalIsOpen(true);
         setLoading(false);
       } catch (e) {
@@ -88,9 +89,10 @@ const EditNaver = () => {
           appearance: 'warning',
           autoDismiss: true,
         });
+        setLoading(false);
       }
     },
-    [addToast],
+    [addToast, id],
   );
 
   const handleCloseModal = useCallback(() => {
@@ -128,7 +130,7 @@ const EditNaver = () => {
       <Content>
         <StyledForm onSubmit={handleSubmit} ref={formRef}>
           <GoBackBox>
-            <Link to="/Home">
+            <Link to="/home">
               <img src={goBackIcon} alt="Voltar" />
               Editar Naver
             </Link>
@@ -190,9 +192,16 @@ const EditNaver = () => {
               required
             />
           </InputGroup>
-          <ButtonBox>
-            {!loading ? <Button type="submit" content="Salvar" /> : <Loading />}
-          </ButtonBox>
+          {!loading && (
+            <ButtonBox>
+              <Button type="submit" content="Salvar" />
+            </ButtonBox>
+          )}
+          {loading && (
+            <LoadingStyle>
+              <Loading />
+            </LoadingStyle>
+          )}
         </StyledForm>
       </Content>
     </Container>

@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import ReactModal from 'react-modal';
+import moment from 'moment';
 
 import api from '../../services/api';
 
@@ -40,22 +41,21 @@ const RegisterNaver: React.FC = () => {
   const { addToast } = useToasts();
 
   const handleSubmit = useCallback(
-    async (data: NewNaverFormData) => {
-      const birthdate = new Date(data.birthdate);
-      const admission_date = new Date(data.admission_date);
-      data.birthdate = birthdate.toLocaleDateString('pt-BR');
-      data.admission_date = admission_date.toLocaleDateString('pt-BR');
-
+    async (data: NewNaverFormData, { reset }) => {
+      data.birthdate = moment(data.birthdate).format('DD-MM-YYYY');
+      data.admission_date = moment(data.admission_date).format('DD-MM-YYYY');
       try {
         setLoading(true);
         await api.post('navers', data);
         setModalIsOpen(true);
         setLoading(false);
+        reset();
       } catch (e) {
-        addToast('Ocorreu um erro tentar excluir naver, tente novamente!', {
+        addToast('Ocorreu um erro tentar adicionar o naver, tente novamente!', {
           appearance: 'warning',
           autoDismiss: true,
         });
+        setLoading(false);
       }
     },
     [addToast],
@@ -96,7 +96,7 @@ const RegisterNaver: React.FC = () => {
       <Content>
         <StyledForm onSubmit={handleSubmit}>
           <GoBackBox>
-            <Link to="/Home">
+            <Link to="/home">
               <img src={goBackIcon} alt="Voltar" />
               Adicionar Naver
             </Link>

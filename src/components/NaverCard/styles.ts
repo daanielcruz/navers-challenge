@@ -11,18 +11,22 @@ export const Container = styled.div`
     width: 100%;
     object-fit: cover;
     margin-bottom: 0.875rem;
+    cursor: pointer;
   }
   > strong {
     font-weight: bold;
     margin-bottom: 0.25rem;
+    cursor: pointer;
   }
   > span {
     margin-bottom: 0.813rem;
+    cursor: pointer;
   }
 `;
 
 export const IconsContainer = styled.div`
   display: flex;
+  align-items: center;
   margin: 0 1rem 0.187rem 0.312rem;
 
   > img:first-child {
@@ -52,6 +56,66 @@ export const ModalContent = styled.div`
     > h1 {
       margin-right: 22.8rem;
     }
+  }
+`;
+
+export const ModalContentNaverInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+
+  > img {
+    position: absolute;
+    top: 1.3rem;
+    right: 1.3rem;
+    cursor: pointer;
+  }
+
+  @media (min-width: 700px) {
+    height: 100%;
+    flex-direction: row;
+    width: 700px;
+  }
+`;
+
+export const NaverPhoto = styled.div`
+  width: 100%;
+
+  > img {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 700px) {
+    width: 50%;
+    > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+`;
+
+export const NaverInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 1.88rem;
+
+  > h1 {
+    margin: 2rem 0 0.62rem 0;
+  }
+
+  > span {
+    margin-bottom: 1.5rem;
+  }
+
+  > strong {
+    font-weight: bold;
+    margin-bottom: 0.62rem;
+  }
+
+  > div {
+    margin-bottom: 1.68rem;
   }
 `;
 

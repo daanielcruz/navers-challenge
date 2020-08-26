@@ -6,7 +6,8 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
+
   padding: 0 2rem;
 
   > img {
@@ -25,6 +26,7 @@ export const Container = styled.div`
   }
 
   @media (min-width: 700px) {
+    margin-bottom: 2.5rem;
     > img {
       height: 2.31rem;
     }

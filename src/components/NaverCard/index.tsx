@@ -1,5 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
+import { Link } from 'react-router-dom';
+import ReactModal from 'react-modal';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 
 import deleteIcon from '../../assets/delete.svg';
 import editIcon from '../../assets/edit.svg';
@@ -16,6 +20,9 @@ import {
   H1,
   Space,
   ButtonsBox,
+  ModalContentNaverInfo,
+  NaverPhoto,
+  NaverInfo,
 } from './styles';
 
 interface NaverProps {
@@ -31,24 +38,33 @@ interface NaverProps {
 
 interface NaverCardProps {
   naver: NaverProps;
-  setModalContent: React.Dispatch<React.SetStateAction<Array<any>>>;
-  setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalContent?: React.Dispatch<React.SetStateAction<Array<any>>>;
+  setModalIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setNavers: React.Dispatch<React.SetStateAction<Array<Object>>>;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const NaverCard: React.FC<NaverCardProps> = ({
   naver,
-  setModalContent,
-  setModalIsOpen,
+  /* setModalContent,
+  setModalIsOpen, */
   setNavers,
-  setLoading,
 }) => {
+  const [modalContent, setModalContent] = useState<Array<any>>([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [secondModalIsOpen, setSecondModalIsOpen] = useState(false);
   const { addToast } = useToasts();
 
-  const handleCloseModal = useCallback(() => {
+  ReactModal.setAppElement('#root');
+
+  const handleCloseModal = useCallback(async () => {
     setModalIsOpen(false);
-  }, [setModalIsOpen]);
+    const res = await api.get('navers');
+    setNavers(res.data);
+  }, [setNavers]);
+
+  const handleCloseSecondModal = useCallback(async () => {
+    setSecondModalIsOpen(false);
+  }, []);
 
   const modalDeleteSuccess = useCallback(() => {
     setModalContent([
@@ -65,17 +81,13 @@ const NaverCard: React.FC<NaverCardProps> = ({
     try {
       await api.delete(`navers/${naver.id}`);
       modalDeleteSuccess();
-      setLoading(true);
-      const res = await api.get('navers');
-      setNavers(res.data);
-      setLoading(false);
     } catch (e) {
       addToast('Ocorreu um erro tentar excluir naver, tente novamente!', {
         appearance: 'warning',
         autoDismiss: true,
       });
     }
-  }, [naver.id, addToast, modalDeleteSuccess, setLoading, setNavers]);
+  }, [naver.id, addToast, modalDeleteSuccess]);
 
   const modalConfirmToDelete = useCallback(() => {
     setModalContent([
@@ -88,6 +100,7 @@ const NaverCard: React.FC<NaverCardProps> = ({
             theme={'secundary'}
             onClick={handleCloseModal}
           />
+
           <Button content="Excluir" onClick={deleteNaverFromApi} />
         </ButtonsBox>
       </ModalContent>,
@@ -101,15 +114,89 @@ const NaverCard: React.FC<NaverCardProps> = ({
     setModalIsOpen,
   ]);
 
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      border: 'none',
+      borderRadius: 0,
+    },
+    overlay: {
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+  };
+
+  const customStylesSecond = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      border: 'none',
+      borderRadius: 0,
+      padding: 0,
+    },
+    overlay: {
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+  };
+
   return (
     <Container>
-      <img src={naver.url} alt="Foto do Naver" />
-      <strong>{naver.name}</strong>
-      <span>{naver.job_role}</span>
+      <ReactModal isOpen={secondModalIsOpen} style={customStylesSecond}>
+        <ModalContentNaverInfo key={naver.id}>
+          <img src={closeIcon} alt="Fechar" onClick={handleCloseSecondModal} />
+          <NaverPhoto>
+            <img src={naver.url} alt={naver.name} />
+          </NaverPhoto>
+
+          <NaverInfo>
+            <H1>{naver.name}</H1>
+            <span>{naver.job_role}</span>
+            <strong>Idade</strong>
+            <span>{moment().diff(naver.birthdate, 'years')} anos</span>
+            <strong>Tempo de empresa</strong>
+            <span>{moment().diff(naver.admission_date, 'years')} anos</span>
+            <strong>Projetos que participou</strong>
+            <span>{naver.project}</span>
+
+            <IconsContainer>
+              <img
+                src={deleteIcon}
+                alt="Excluir"
+                onClick={modalConfirmToDelete}
+              />
+              <Link to={`/update/${naver.id}`}>
+                <img src={editIcon} alt="Editar" />
+              </Link>
+            </IconsContainer>
+          </NaverInfo>
+        </ModalContentNaverInfo>
+      </ReactModal>
+
+      <ReactModal isOpen={modalIsOpen} style={customStyles}>
+        {modalContent}
+      </ReactModal>
+
+      <img
+        src={naver.url}
+        alt={naver.name}
+        onClick={() => setSecondModalIsOpen(true)}
+      />
+      <strong onClick={() => {}}>{naver.name}</strong>
+      <span onClick={() => {}}>{naver.job_role}</span>
 
       <IconsContainer>
         <img src={deleteIcon} alt="Excluir" onClick={modalConfirmToDelete} />
-        <img src={editIcon} alt="Editar" onClick={() => console.log('del')} />
+        <Link to={`/update/${naver.id}`}>
+          <img src={editIcon} alt="Editar" />
+        </Link>
       </IconsContainer>
     </Container>
   );

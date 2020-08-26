@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import ReactModal from 'react-modal';
 
 import api from '../../services/api';
 
@@ -13,8 +12,6 @@ import Loading from '../../components/Loading';
 const Home = () => {
   const [navers, setNavers] = useState<Array<Object>>([]);
   const [loading, setLoading] = useState(true);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<Array<any>>([]);
 
   useEffect(() => {
     async function getNavers() {
@@ -25,27 +22,8 @@ const Home = () => {
     getNavers();
   }, []);
 
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      border: 'none',
-      borderRadius: 0,
-    },
-    overlay: {
-      backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-  };
-
   return (
     <Container>
-      <ReactModal isOpen={modalIsOpen} style={customStyles}>
-        {modalContent}
-      </ReactModal>
       <PageHeader />
       <TopBar>
         <strong>Navers</strong>
@@ -58,13 +36,7 @@ const Home = () => {
         ) : (
           navers.map((naver: any) => (
             <CardsItem key={naver.id}>
-              <NaverCard
-                naver={naver}
-                setModalContent={setModalContent}
-                setModalIsOpen={setModalIsOpen}
-                setNavers={setNavers}
-                setLoading={setLoading}
-              />
+              <NaverCard naver={naver} setNavers={setNavers} />
             </CardsItem>
           ))
         )}
